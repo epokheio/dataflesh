@@ -1,0 +1,7 @@
+<form action="<%= rootPath %>/remote-controller" method="POST">
+<input type="number" placeholder="freq ms" name="device1" <% if (typeof val1 !== 'undefined') { %> value="<%= Number(val1) %>" <% } %>   >
+<input type="number" placeholder="freq ms" name="device2" <% if (typeof val2 !== 'undefined') { %> value="<%= Number(val2) %>" <% } %> >
+<input type="number" placeholder="freq ms" name="device3" <% if (typeof val3 !== 'undefined') { %> value="<%= Number(val3) %>" <% } %> >
+<input type="number" placeholder="freq ms" name="device4" <% if (typeof val4 !== 'undefined') { %> value="<%= Number(val4) %>" <% } %> >
+<button type="submit">Submit</button>
+</form>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>B&W</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+        <style>
+            * {
+                margin: 0;                                      
+              }
+
+            html, body {
+                margin:0;
+                overflow:hidden;
+                font-family: "Rounded Mplus 1c";
+                height: 100%;
+                width:100%;
+                color:white;
+                display:block;
+            }
+
+
+            div {
+                width: 100%;
+                height: 100vh;
+                display: block;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #pictures .background {
+                opacity: 0;
+                display: block;
+                position: absolute;
+                z-index: -1;
+                width: 100%;
+            }
+
+            #pictures .background:nth-child(1) {
+                -webkit-animation: fadePaddedFor5Images 2s 0s linear infinite;
+                animation: fadePaddedFor5Images 2s 0s linear infinite;
+            }
+
+            #pictures .background:nth-child(2) {
+                -webkit-animation: fadePaddedFor5Images10s 1s linear infinite;
+                animation: fadePaddedFor5Images 2s 0.2s linear infinite;
+            }
+
+            #pictures .background:nth-child(3) {
+                -webkit-animation: fadePaddedFor5Images 1s 0.2s linear infinite;
+                animation: fadePaddedFor5Images 4s 0.4s linear infinite;
+            }
+
+            #pictures .background:nth-child(4) {
+                    -webkit-animation: fadePaddedFor5Images 1s 0.5s linear infinite;
+                            animation: fadePaddedFor5Images 1s 0.5s linear infinite;
+            }
+
+            #pictures .background:nth-child(5) {
+                    -webkit-animation: fadePaddedFor5Images 1s 0.5s linear infinite;
+                            animation: fadePaddedFor5Images 1s 0.5s linear infinite;
+            }
+
+            /* 1/(2*total) */
+            @-webkit-keyframes fadePaddedFor5Images {
+                0% {opacity: 0;}
+                10% {opacity: 1;}
+                20% {opacity: 1;}
+                30% {opacity: 0;}
+            }
+            @keyframes fadePaddedFor5Images {
+                0% {opacity: 0;}
+                10% {opacity: 1;}
+                20% {opacity: 1;}
+                30% {opacity: 0;}
+            }
+
+            .place {
+                background-color: black;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div id="strombo" style="display:block;height:100vh;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" 
+             unselectable="on"
+             onselectstart="return false;" 
+             onmousedown="return false;">
+        </div>
+        <div id="pictures" style="display:none;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;">
+            <img class="background" src="https://artfrequencies.com/collusion_perf/remote-flash/img1.jpg"/>
+            <img class="background" src="https://artfrequencies.com/collusion_perf/remote-flash/img2.jpg"/>
+            <img class="background" src="https://artfrequencies.com/collusion_perf/remote-flash/img1.jpg"/>
+            <img class="background" src="https://artfrequencies.com/collusion_perf/remote-flash/img4.jpg"/>
+            <img class="background" src="https://artfrequencies.com/collusion_perf/remote-flash/img3.jpg"/>
+        </div>
+        <script type="text/javascript">
+
+            document.addEventListener(
+                "keydown",
+                function(event) {
+                    $.post( "/collusion/remote-controller", { flesh: "on" } );
+                },
+                false
+            );
+            
+            document.addEventListener(
+                "keyup",
+                function(event) {
+                    $.post( "/collusion/remote-controller", { flesh: "off" } ); 
+                },
+                false
+            );
+
+
+            /*  ============================================================= */
+       
+            var flag = false;
+            var freq1 = 1000;
+            var freq;
+          
+            var repeat = setInterval(blinker, freq1);
+
+            function blinker(){
+                $("#strombo").toggleClass("place");
+                sendRequest();
+            }
+
+            function resetInterval(freq){
+                clearInterval(repeat);
+                repeat = setInterval(blinker, freq);
+            }
+            
+            if (flag === false){
+                sendRequest();
+            }
+
+
+            function sendRequest(){
+                flag = true;
+                var gofetchfreq = true;
+                $.ajax({
+                    url: "flesh", 
+                    success:
+                        function(flesh){
+                            if(flesh == "on"){
+                                document.querySelector("#strombo").style="display:none";
+                                document.querySelector("#pictures").style="display:block;height:100vh;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;";
+                                
+                            }else if(flesh == "off"){
+                                document.querySelector("#strombo").style="display:flex;height:100vh;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;";
+                                document.querySelector("#pictures").style="display:none;";
+                                
+                            }
+                        }
+
+                });
+
+                $.ajax({
+                    url: "data1",
+                    success: 
+                        function(data){
+                            if(Number(data) != Number(freq)){
+                                console.log("##########################");
+                                console.log("data: "+ data);
+                                console.log("prev freq: " + freq);
+                                freq = Number(data);
+                                console.log("updated freq: " + freq);
+                                resetInterval(freq);
+                            }
+                                
+                        }
+                });
+
+            };
+           
+        </script>
+    </body>
+</html>
+
+
+            /*  ============================================================= */
+       
+            var flag = false;
+            var freq1 = 1000;
+            var freq;
+          
+            var repeat = setInterval(blinker, freq1);
+
+            function blinker(){
+                $("#strombo").toggleClass("place");
+                sendRequest();
+            }
+
+            function resetInterval(freq){
+                clearInterval(repeat);
+                repeat = setInterval(blinker, freq);
+            }
+            
+            if (flag === false){
+                sendRequest();
+            }
+
+
+            function sendRequest(){
+                flag = true;
+                $.ajax({
+                    url: "data1",
+                    success: 
+                        function(data){
+                            if(Number(data) != Number(freq)){
+                                console.log("##########################");
+                                console.log("data: "+ data);
+                                console.log("prev freq: " + freq);
+                                freq = Number(data);
+                                console.log("updated freq: " + freq);
+                                resetInterval(freq);
+                            }
+                                
+                        }
+                });
+
+            };
+           
+        </script>
+    </body>
+</html>
